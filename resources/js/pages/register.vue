@@ -45,7 +45,7 @@ const register = async () => {
   isLoading.value = true
 
   try {
-    const response = await fetch('/auth/register', {
+    const response = await fetch('/index.php/auth/register', {
       method: 'POST',
       headers: getCsrfHeaders(),
       credentials: 'same-origin',

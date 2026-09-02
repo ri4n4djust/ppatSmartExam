@@ -42,7 +42,7 @@ const login = async () => {
   isLoading.value = true
 
   try {
-    const response = await fetch('/auth/login', {
+    const response = await fetch('/index.php/auth/login', {
       method: 'POST',
       headers: getCsrfHeaders(),
       credentials: 'same-origin',
