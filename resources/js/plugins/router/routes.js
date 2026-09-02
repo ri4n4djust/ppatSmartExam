@@ -48,10 +48,7 @@ export const routes = [
         path: 'daftar-siswa',
         component: () => import('@/pages/daftar-siswa.vue'),
       },
-      {
-        path: 'daftar-pengguna',
-        component: () => import('@/pages/daftar-pengguna.vue'),
-      },
+      
       {
         path: 'typography',
         component: () => import('@/pages/typography.vue'),
