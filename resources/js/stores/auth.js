@@ -23,7 +23,7 @@ export const useAuthStore = defineStore('auth', {
 
     async restoreSession() {
       try {
-        const response = await fetch('/auth/user', {
+        const response = await fetch('/index.php/auth/user', {
           headers: {
             Accept: 'application/json',
           },

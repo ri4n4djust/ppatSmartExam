@@ -23,20 +23,6 @@ const getCsrfHeaders = () => {
   }
 }
 
-const getFreshCsrfToken = async () => {
-  const response = await fetch('/csrf-token', {
-    credentials: 'same-origin',
-    headers: { Accept: 'application/json' },
-  })
-
-  if (!response.ok)
-    throw new Error('Unable to refresh the security token.')
-
-  const { token } = await response.json()
-
-  return token
-}
-
 const logout = async () => {
   if (isLoggingOut.value)
     return
@@ -45,14 +31,9 @@ const logout = async () => {
   isLoggingOut.value = true
 
   try {
-    const token = await getFreshCsrfToken()
-
-    const response = await fetch('/auth/logout', {
+    const response = await fetch('/index.php/auth/logout', {
       method: 'POST',
-      headers: {
-        ...getCsrfHeaders(),
-        'X-CSRF-TOKEN': token,
-      },
+      headers: getCsrfHeaders(),
       credentials: 'same-origin',
     })
 
@@ -60,7 +41,7 @@ const logout = async () => {
       throw new Error('Unable to log out.')
 
     authStore.clearUser()
-    window.location.assign('/login')
+    window.location.assign('/index.php/login')
   }
   catch {
     logoutError.value = 'Unable to log out. Please try again.'
