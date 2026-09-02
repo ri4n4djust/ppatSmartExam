@@ -10,7 +10,7 @@ import { useTheme } from 'vuetify'
 
 const form = ref({
   username: '',
-  name: 'tes',
+  name: '',
   email: '',
   password: '',
   password_confirmation: '',
@@ -32,18 +32,11 @@ const isPasswordVisible = ref(false)
 
 const getCsrfHeaders = () => {
   const metaToken = document.querySelector('meta[name="csrf-token"]')?.content ?? ''
-  const xsrfCookie = document.cookie
-    .split('; ')
-    .find(row => row.startsWith('XSRF-TOKEN='))
-    ?.split('=')[1]
-
-  const xsrfToken = xsrfCookie ? decodeURIComponent(xsrfCookie) : ''
 
   return {
     Accept: 'application/json',
     'Content-Type': 'application/json',
     ...(metaToken ? { 'X-CSRF-TOKEN': metaToken } : {}),
-    ...(xsrfToken ? { 'X-XSRF-TOKEN': xsrfToken } : {}),
   }
 }
 
@@ -127,6 +120,14 @@ const register = async () => {
                 v-model="form.username"
                 label="Username"
                 placeholder="Johndoe"
+              />
+            </VCol>
+            <!-- Name -->
+            <VCol cols="12">
+              <VTextField
+                v-model="form.name"
+                label="Nama"
+                placeholder="Nama lengkap"
               />
             </VCol>
             <!-- email -->

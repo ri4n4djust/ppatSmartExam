@@ -27,19 +27,14 @@ const authThemeMask = computed(() => {
 
 const isPasswordVisible = ref(false)
 
+const getCsrfHeaders = () => {
+  const metaToken = document.querySelector('meta[name="csrf-token"]')?.content ?? ''
 
-const getFreshCsrfToken = async () => {
-  const response = await fetch('/csrf-token', {
-    credentials: 'same-origin',
-    headers: { Accept: 'application/json' },
-  })
-
-  if (!response.ok)
-    throw new Error('Unable to refresh the security token.')
-
-  const { token } = await response.json()
-
-  return token
+  return {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    ...(metaToken ? { 'X-CSRF-TOKEN': metaToken } : {}),
+  }
 }
 
 const login = async () => {
@@ -49,10 +44,7 @@ const login = async () => {
   try {
     const response = await fetch('/auth/login', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(await getFreshCsrfToken()) ? { 'X-CSRF-TOKEN': await getFreshCsrfToken() } : {},
-      },
+      headers: getCsrfHeaders(),
       credentials: 'same-origin',
       body: JSON.stringify(form.value),
     })
