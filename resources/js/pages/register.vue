@@ -51,7 +51,15 @@ const register = async () => {
       credentials: 'same-origin',
       body: JSON.stringify(form.value),
     })
-    const data = await response.json()
+    const responseText = await response.text()
+    let data
+
+    try {
+      data = JSON.parse(responseText)
+    }
+    catch {
+      throw new Error(`Server returned an invalid response (${response.status}).`)
+    }
 
     if (!response.ok)
       throw new Error(Object.values(data.errors ?? {})[0]?.[0] ?? data.message ?? 'Unable to create the account.')
