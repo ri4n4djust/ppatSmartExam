@@ -29,11 +29,18 @@ const isPasswordVisible = ref(false)
 
 const getCsrfHeaders = () => {
   const metaToken = document.querySelector('meta[name="csrf-token"]')?.content ?? ''
+  const xsrfCookie = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('XSRF-TOKEN='))
+    ?.split('=')[1]
+
+  const xsrfToken = xsrfCookie ? decodeURIComponent(xsrfCookie) : ''
 
   return {
     Accept: 'application/json',
     'Content-Type': 'application/json',
     ...(metaToken ? { 'X-CSRF-TOKEN': metaToken } : {}),
+    ...(xsrfToken ? { 'X-XSRF-TOKEN': xsrfToken } : {}),
   }
 }
 
@@ -42,21 +49,13 @@ const login = async () => {
   isLoading.value = true
 
   try {
-    const response = await fetch('/index.php/auth/login', {
+    const response = await fetch('/auth/login', {
       method: 'POST',
       headers: getCsrfHeaders(),
       credentials: 'same-origin',
       body: JSON.stringify(form.value),
     })
-    const responseText = await response.text()
-    let data
-
-    try {
-      data = JSON.parse(responseText)
-    }
-    catch {
-      throw new Error(`Server returned an invalid response (${response.status}).`)
-    }
+    const data = await response.json()
 
     if (!response.ok)
       throw new Error(data.errors?.email?.[0] ?? data.message ?? 'Unable to sign in.')
@@ -88,14 +87,13 @@ const login = async () => {
           class="d-flex align-center gap-3"
         >
           <!-- eslint-disable vue/no-v-html -->
-          <img
-            :src="logo"
-            alt="PPAT SMART EXAM logo"
-            class="app-logo-image login-logo"
-          >
-          <!-- <h2 class="font-weight-medium text-2xl text-uppercase">
+          <div
+            class="d-flex"
+            v-html="logo"
+          />
+          <h2 class="font-weight-medium text-2xl text-uppercase">
             PPAT SMART EXAM
-          </h2> -->
+          </h2>
         </RouterLink>
       </VCardItem>
 
@@ -222,10 +220,4 @@ const login = async () => {
 
 <style lang="scss">
 @use "@core-scss/template/pages/page-auth";
-
-.login-logo {
-  block-size: 4rem;
-  inline-size: 4rem;
-  object-fit: contain;
-}
 </style>

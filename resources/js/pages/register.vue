@@ -10,7 +10,7 @@ import { useTheme } from 'vuetify'
 
 const form = ref({
   username: '',
-  name: '',
+  name: 'tes',
   email: '',
   password: '',
   password_confirmation: '',
@@ -32,11 +32,18 @@ const isPasswordVisible = ref(false)
 
 const getCsrfHeaders = () => {
   const metaToken = document.querySelector('meta[name="csrf-token"]')?.content ?? ''
+  const xsrfCookie = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('XSRF-TOKEN='))
+    ?.split('=')[1]
+
+  const xsrfToken = xsrfCookie ? decodeURIComponent(xsrfCookie) : ''
 
   return {
     Accept: 'application/json',
     'Content-Type': 'application/json',
     ...(metaToken ? { 'X-CSRF-TOKEN': metaToken } : {}),
+    ...(xsrfToken ? { 'X-XSRF-TOKEN': xsrfToken } : {}),
   }
 }
 
@@ -45,21 +52,13 @@ const register = async () => {
   isLoading.value = true
 
   try {
-    const response = await fetch('/index.php/auth/register', {
+    const response = await fetch('/auth/register', {
       method: 'POST',
       headers: getCsrfHeaders(),
       credentials: 'same-origin',
       body: JSON.stringify(form.value),
     })
-    const responseText = await response.text()
-    let data
-
-    try {
-      data = JSON.parse(responseText)
-    }
-    catch {
-      throw new Error(`Server returned an invalid response (${response.status}).`)
-    }
+    const data = await response.json()
 
     if (!response.ok)
       throw new Error(Object.values(data.errors ?? {})[0]?.[0] ?? data.message ?? 'Unable to create the account.')
@@ -94,7 +93,7 @@ const register = async () => {
           <img
             :src="logo"
             alt="PPAT SMART EXAM logo"
-            class="app-logo-image login-logo"
+            class="app-logo-image"
           >
           <!-- <h2 class="font-weight-medium text-2xl text-uppercase">
             PPAT SMART EXAM
@@ -128,14 +127,6 @@ const register = async () => {
                 v-model="form.username"
                 label="Username"
                 placeholder="Johndoe"
-              />
-            </VCol>
-            <!-- Name -->
-            <VCol cols="12">
-              <VTextField
-                v-model="form.name"
-                label="Nama"
-                placeholder="Nama lengkap"
               />
             </VCol>
             <!-- email -->

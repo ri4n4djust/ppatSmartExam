@@ -15,7 +15,6 @@ const getCsrfHeaders = () => {
 
   const xsrfToken = xsrfCookie ? decodeURIComponent(xsrfCookie) : ''
 
-
   return {
     Accept: 'application/json',
     ...(metaToken ? { 'X-CSRF-TOKEN': metaToken } : {}),
@@ -31,7 +30,7 @@ const logout = async () => {
   isLoggingOut.value = true
 
   try {
-    const response = await fetch('/index.php/auth/logout', {
+    const response = await fetch('/auth/logout', {
       method: 'POST',
       headers: getCsrfHeaders(),
       credentials: 'same-origin',
@@ -41,7 +40,7 @@ const logout = async () => {
       throw new Error('Unable to log out.')
 
     authStore.clearUser()
-    window.location.assign('/index.php/login')
+    window.location.assign('/login')
   }
   catch {
     logoutError.value = 'Unable to log out. Please try again.'
