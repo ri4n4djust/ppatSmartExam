@@ -7,13 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class Questions extends Model
 {
     protected $fillable = [
-        'category',
-        'question',
-        'option_a',
-        'option_b',
-        'option_c',
-        'option_d',
+        'category_id',
+        'text',
+        'options',
         'correct_answer',
-        'score',
+        'score_value',
+        'score_ifwrong',
+        'difficulty',
+        'type',
     ];
+
+
 }

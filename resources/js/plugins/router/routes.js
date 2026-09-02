@@ -29,6 +29,30 @@ export const routes = [
         component: () => import('@/pages/bank-soal.vue'),
       },
       {
+        path: 'jadwal-ujian',
+        component: () => import('@/pages/jadwal-ujian.vue'),
+      },
+      {
+        path: 'laporan-ujian',
+        component: () => import('@/pages/laporan-ujian.vue'),
+      },
+      {
+        path: 'laporan-ujian-admin',
+        component: () => import('@/pages/laporan-ujian-admin.vue'),
+      },
+      {
+        path: 'lembar-ujian',
+        component: () => import('@/pages/lembar-ujian.vue'),
+      },
+      {
+        path: 'daftar-siswa',
+        component: () => import('@/pages/daftar-siswa.vue'),
+      },
+      {
+        path: 'daftar-pengguna',
+        component: () => import('@/pages/daftar-pengguna.vue'),
+      },
+      {
         path: 'typography',
         component: () => import('@/pages/typography.vue'),
       },

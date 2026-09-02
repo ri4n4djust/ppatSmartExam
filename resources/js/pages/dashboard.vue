@@ -1,15 +1,10 @@
 <script setup>
 import { useAuthStore } from '@/stores/auth'
 import AnalyticsAward from '@/views/dashboard/AnalyticsAward.vue'
-import AnalyticsBarCharts from '@/views/dashboard/AnalyticsBarCharts.vue'
-import AnalyticsDepositWithdraw from '@/views/dashboard/AnalyticsDepositWithdraw.vue'
-import AnalyticsSalesByCountries from '@/views/dashboard/AnalyticsSalesByCountries.vue'
-import AnalyticsTotalEarning from '@/views/dashboard/AnalyticsTotalEarning.vue'
-import AnalyticsTotalProfitLineCharts from '@/views/dashboard/AnalyticsTotalProfitLineCharts.vue'
+// import AnalyticsTotalEarning from '@/views/dashboard/AnalyticsTotalEarning.vue'
 import AnalyticsTransactions from '@/views/dashboard/AnalyticsTransactions.vue'
 import AnalyticsUserTable from '@/views/dashboard/AnalyticsUserTable.vue'
-import AnalyticsWeeklyOverview from '@/views/dashboard/AnalyticsWeeklyOverview.vue'
-import CardStatisticsVertical from '@core/components/cards/CardStatisticsVertical.vue'
+import NextExam from '@/views/dashboard/nextExam.vue'
 
 
 const authStore = useAuthStore();
@@ -60,7 +55,12 @@ const newProject = {
         <AnalyticsTransactions />
       </VCol>
 
-      
+      <VCol
+        cols="12"
+        md="9"
+      >
+        <NextExam />
+      </VCol>
     </VRow>
   </div>
   <div v-else>
@@ -79,25 +79,25 @@ const newProject = {
         <AnalyticsTransactions />
       </VCol>
 
-      <VCol
+      <!-- <VCol
         cols="12"
         md="4"
       >
         <AnalyticsWeeklyOverview />
-      </VCol>
+      </VCol> -->
 
-      <VCol
+      <!-- <VCol
         cols="12"
         md="4"
       >
         <AnalyticsTotalEarning />
-      </VCol>
+      </VCol> -->
 
       <VCol
         cols="12"
         md="4"
       >
-        <VRow class="match-height">
+        <!-- <VRow class="match-height">
           <VCol
             cols="12"
             sm="6"
@@ -125,10 +125,10 @@ const newProject = {
           >
             <AnalyticsBarCharts />
           </VCol>
-        </VRow>
+        </VRow> -->
       </VCol>
 
-      <VCol
+      <!-- <VCol
         cols="12"
         md="4"
       >
@@ -140,7 +140,7 @@ const newProject = {
         md="8"
       >
         <AnalyticsDepositWithdraw />
-      </VCol>
+      </VCol> -->
 
       <VCol cols="12">
         <AnalyticsUserTable />

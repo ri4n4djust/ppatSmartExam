@@ -8,7 +8,10 @@ class Exams extends Model
 {
     protected $fillable = [
         'title',
-        'description',
-        'duration_minutes',
+        'start_time',
+        'end_time',
+        'duration',
+        'count_qa',
+        'status',
     ];
 }

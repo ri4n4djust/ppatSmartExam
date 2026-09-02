@@ -1,6 +1,6 @@
 <script setup>
 import NavItems from '@/layouts/components/NavItems.vue'
-import logo from '@images/logo.svg?raw'
+import logo from '@images/logoippat.png'
 import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
 
 // Components
@@ -63,16 +63,15 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
         to="/"
         class="app-logo app-title-wrapper"
       >
-        <!-- eslint-disable vue/no-v-html -->
-        <div
-          class="d-flex"
-          v-html="logo"
-        />
-        <!-- eslint-enable -->
+        <img
+          :src="logo"
+          alt="PPAT SMART EXAM logo"
+          class="app-logo-image"
+        >
 
-        <h1 class="font-weight-medium leading-normal text-xl text-uppercase">
+        <h4 class="font-weight-medium leading-normal">
           PPAT SMART EXAM
-        </h1>
+        </h4>
       </RouterLink>
 
       <IconBtn
@@ -111,6 +110,12 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
   display: flex;
   align-items: center;
   column-gap: 0.75rem;
+
+  .app-logo-image {
+    width: 2.5rem;
+    height: auto;
+    object-fit: contain;
+  }
 
   .app-logo-title {
     font-size: 1.25rem;

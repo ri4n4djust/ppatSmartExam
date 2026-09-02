@@ -1,11 +1,11 @@
 <script setup>
+import { useAuthStore } from '@/stores/auth'
 import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
-import logo from '@images/logo.svg?raw'
+import logo from '@images/logoippat.png'
 import authV1MaskDark from '@images/pages/auth-v1-mask-dark.png'
 import authV1MaskLight from '@images/pages/auth-v1-mask-light.png'
 import authV1Tree2 from '@images/pages/auth-v1-tree-2.png'
 import authV1Tree from '@images/pages/auth-v1-tree.png'
-import { useAuthStore } from '@/stores/auth'
 import { useTheme } from 'vuetify'
 
 const form = ref({
@@ -30,6 +30,23 @@ const authThemeMask = computed(() => {
 
 const isPasswordVisible = ref(false)
 
+const getCsrfHeaders = () => {
+  const metaToken = document.querySelector('meta[name="csrf-token"]')?.content ?? ''
+  const xsrfCookie = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('XSRF-TOKEN='))
+    ?.split('=')[1]
+
+  const xsrfToken = xsrfCookie ? decodeURIComponent(xsrfCookie) : ''
+
+  return {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    ...(metaToken ? { 'X-CSRF-TOKEN': metaToken } : {}),
+    ...(xsrfToken ? { 'X-XSRF-TOKEN': xsrfToken } : {}),
+  }
+}
+
 const register = async () => {
   errorMessage.value = ''
   isLoading.value = true
@@ -37,11 +54,7 @@ const register = async () => {
   try {
     const response = await fetch('/auth/register', {
       method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
-      },
+      headers: getCsrfHeaders(),
       credentials: 'same-origin',
       body: JSON.stringify(form.value),
     })
@@ -77,19 +90,20 @@ const register = async () => {
           class="d-flex align-center gap-3"
         >
           <!-- eslint-disable vue/no-v-html -->
-          <div
-            class="d-flex"
-            v-html="logo"
-          />
-          <h2 class="font-weight-medium text-2xl text-uppercase">
-            Materio
-          </h2>
+          <img
+            :src="logo"
+            alt="PPAT SMART EXAM logo"
+            class="app-logo-image login-logo"
+          >
+          <!-- <h2 class="font-weight-medium text-2xl text-uppercase">
+            PPAT SMART EXAM
+          </h2> -->
         </RouterLink>
       </VCardItem>
 
       <VCardText class="pt-2">
         <h4 class="text-h4 mb-1">
-          Adventure starts here 🚀
+          Welcome to PPAT SMART EXAM! 👋🏻
         </h4>
         <p class="mb-0">
           Make your app management easy and fun!
@@ -227,4 +241,9 @@ const register = async () => {
 
 <style lang="scss">
 @use "@core-scss/template/pages/page-auth";
+.login-logo {
+  block-size: 4rem;
+  inline-size: 4rem;
+  object-fit: contain;
+}
 </style>

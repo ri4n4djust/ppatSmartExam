@@ -1,5 +1,5 @@
 <script setup>
-import logo from '@images/logo.svg?raw'
+import logo from '@images/logoippat.png'
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import { useDisplay } from 'vuetify'
 
@@ -63,8 +63,9 @@ const handleNavScroll = evt => {
         >
           <div
             class="d-flex"
-            v-html="logo"
-          />
+          >
+            <img :src="logo" alt="Logo" width="86" height="48" />
+          </div>
 
           <h1 class="font-weight-medium leading-normal text-xl text-uppercase">
             PPAT SMART EXAM

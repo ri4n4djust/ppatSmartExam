@@ -1,10 +1,41 @@
 <script setup>
-import avatar1 from '@images/avatars/avatar-1.png'
 import { useAuthStore } from '@/stores/auth'
+import avatar1 from '@images/avatars/avatar-1.png'
 
 const authStore = useAuthStore()
 const isLoggingOut = ref(false)
 const logoutError = ref('')
+
+const getCsrfHeaders = () => {
+  const metaToken = document.querySelector('meta[name="csrf-token"]')?.content ?? ''
+  const xsrfCookie = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('XSRF-TOKEN='))
+    ?.split('=')[1]
+
+  const xsrfToken = xsrfCookie ? decodeURIComponent(xsrfCookie) : ''
+
+
+  return {
+    Accept: 'application/json',
+    ...(metaToken ? { 'X-CSRF-TOKEN': metaToken } : {}),
+    ...(xsrfToken ? { 'X-XSRF-TOKEN': xsrfToken } : {}),
+  }
+}
+
+const getFreshCsrfToken = async () => {
+  const response = await fetch('/csrf-token', {
+    credentials: 'same-origin',
+    headers: { Accept: 'application/json' },
+  })
+
+  if (!response.ok)
+    throw new Error('Unable to refresh the security token.')
+
+  const { token } = await response.json()
+
+  return token
+}
 
 const logout = async () => {
   if (isLoggingOut.value)
@@ -14,11 +45,13 @@ const logout = async () => {
   isLoggingOut.value = true
 
   try {
+    const token = await getFreshCsrfToken()
+
     const response = await fetch('/auth/logout', {
       method: 'POST',
       headers: {
-        Accept: 'application/json',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
+        ...getCsrfHeaders(),
+        'X-CSRF-TOKEN': token,
       },
       credentials: 'same-origin',
     })

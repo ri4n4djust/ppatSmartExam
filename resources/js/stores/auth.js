@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
+    idUser: null
   }),
 
   getters: {
@@ -12,10 +13,12 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     setUser(user) {
       this.user = user
+      this.idUser = user.id
     },
 
     clearUser() {
       this.user = null
+      this.idUser = null
     },
 
     async restoreSession() {

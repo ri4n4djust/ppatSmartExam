@@ -1,5 +1,5 @@
 <script setup>
-import logo from '@images/logo.svg?raw';
+import logo from '@images/logoippat.png';
 
 const menuItems = [
   { title: 'Home', href: '#home' },
@@ -11,9 +11,13 @@ const menuItems = [
 <template>
   <div class="guest-page">
     <header class="guest-navbar">
-      <RouterLink to="/" class="brand" aria-label="PPAT SMART EXAM home">
+      <RouterLink to="/" class="brand" aria-label="PPAT SMART EXAM">
         <!-- eslint-disable vue/no-v-html -->
-        <span v-html="logo" />
+        <img
+          :src="logo"
+          alt="PPAT SMART EXAM logo"
+          class="app-logo-image"
+        >
         <!-- eslint-enable vue/no-v-html -->
         <span>PPAT SMART EXAM</span>
       </RouterLink>
@@ -31,10 +35,10 @@ const menuItems = [
     <main id="home">
       <section class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">Simple, organized, ready</p>
-          <h1>Manage your work with clarity.</h1>
+          <p class="eyebrow">Simulasi Ujian</p>
+          <h2>Persiapkan diri Anda</h2>
           <p class="hero-description">
-            PPAT SMART EXAM gives your team one calm place to organize tasks, track progress, and move work forward.
+            PPAT SMART EXAM memberikan anda materi dan simulasi ujian yang lengkap.
           </p>
           <div class="hero-actions">
             <VBtn to="/register" color="primary" size="large">Create a free account</VBtn>
@@ -43,8 +47,8 @@ const menuItems = [
         </div>
 
         <div class="hero-panel">
-          <p class="panel-label">Today’s progress</p>
-          <div class="progress-row"><span>Project setup</span><strong>80%</strong></div>
+          <p class="panel-label">Total bergabung</p>
+          <div class="progress-row"><span>Lebih dari 1000 pengguna</span><strong>bergabung</strong></div>
           <VProgressLinear color="primary" height="8" model-value="80" rounded />
           <div class="task-card">
             <VIcon color="success" icon="ri-checkbox-circle-line" />
@@ -60,22 +64,22 @@ const menuItems = [
       <section id="features" class="features">
         <div>
           <p class="eyebrow">Everything in one place</p>
-          <h2>Less busywork. More momentum.</h2>
+          <h2>Bagaimana Memulai.</h2>
         </div>
         <div class="feature-grid">
           <article>
             <VIcon icon="ri-layout-grid-line" />
-            <h3>Clear overview</h3>
+            <h3>Dapatkan Materi</h3>
             <p>See what matters now, without digging through scattered tools.</p>
           </article>
           <article>
             <VIcon icon="ri-team-line" />
-            <h3>Team friendly</h3>
+            <h3>Lakukan Ujian</h3>
             <p>Keep everyone aligned with shared workspaces and simple updates.</p>
           </article>
           <article>
             <VIcon icon="ri-line-chart-line" />
-            <h3>Built to grow</h3>
+            <h3>Menjadi lebih baik</h3>
             <p>Turn day-to-day progress into reliable, useful insight.</p>
           </article>
         </div>
@@ -83,8 +87,8 @@ const menuItems = [
 
       <section id="about" class="about">
         <div>
-          <p class="eyebrow">Made for focused teams</p>
-          <h2>A better starting point for your next project.</h2>
+          <p class="eyebrow">Made for focused</p>
+          <h2>Dibuat untuk meningkatkan potensi anda.</h2>
         </div>
         <VBtn to="/register" color="primary" size="large">Start for free</VBtn>
       </section>
@@ -93,6 +97,7 @@ const menuItems = [
 </template>
 
 <style lang="scss" scoped>
+
 .guest-page {
   min-block-size: 100dvh;
   background: rgb(var(--v-theme-background));
@@ -121,6 +126,12 @@ const menuItems = [
   font-size: 1.25rem;
   font-weight: 700;
   text-decoration: none;
+
+  .app-logo-image {
+    block-size: 2.75rem;
+    inline-size: 2.75rem;
+    object-fit: contain;
+  }
 
   :deep(svg) { block-size: 2rem; inline-size: 2rem; }
 }

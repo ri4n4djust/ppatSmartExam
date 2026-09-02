@@ -3,24 +3,24 @@
 /* eslint-disable camelcase */
 
 const emptyQuestion = () => ({
-  category: '',
+  category: "",
   question: '',
   difficulty: '',
-  type: '',
+  type: 'mcq',
   options: 
     {
-      option_a: '',
-      option_b: '',
-      option_c: '',
-      option_d: '',
-    }
-  ,
-  correct_answer: 'A',
+      option_a: 'A.',
+      option_b: 'B.',
+      option_c: 'C.',
+      option_d: 'D.',
+    },
+  correct_answer: '',
   score: 1,
+  score_if_wrong: -1,
 })
 
 const headers = [
-  { title: 'No', key: 'id' },
+  { title: 'No', key: 'no' },
   { title: 'Category', key: 'category_id' },
   { title: 'Question', key: 'text' },
   { title: 'Correct answer', key: 'correct_answer', width: '160px' },
@@ -35,6 +35,8 @@ const dialog = ref(false)
 const isLoading = ref(false)
 const isSaving = ref(false)
 const errorMessage = ref('')
+const search = ref('')
+const selectedCategory = ref(null)
 
 const categories = ref([])
 
@@ -42,14 +44,41 @@ const categories = ref([])
 const isEditing = computed(() => editingId.value !== null)
 const dialogTitle = computed(() => isEditing.value ? 'Edit question' : 'Add question')
 
-const csrfToken = () => document.querySelector('meta[name="csrf-token"]')?.content ?? ''
+const getCsrfHeaders = () => {
+  const metaToken = document.querySelector('meta[name="csrf-token"]')?.content ?? ''
+  const xsrfCookie = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('XSRF-TOKEN='))
+    ?.split('=')[1]
+
+  const xsrfToken = xsrfCookie ? decodeURIComponent(xsrfCookie) : ''
+
+  return {
+    Accept: 'application/json',
+    ...(metaToken ? { 'X-CSRF-TOKEN': metaToken } : {}),
+    ...(xsrfToken ? { 'X-XSRF-TOKEN': xsrfToken } : {}),
+  }
+}
+const getFreshCsrfToken = async () => {
+  const response = await fetch('/csrf-token', {
+    credentials: 'same-origin',
+    headers: { Accept: 'application/json' },
+  })
+
+  if (!response.ok)
+    throw new Error('Unable to refresh the security token.')
+
+  const { token } = await response.json()
+
+  return token
+}
 
 const request = async (url, options = {}) => {
   const response = await fetch(url, {
     credentials: 'same-origin',
     ...options,
     headers: {
-      Accept: 'application/json',
+      ...getCsrfHeaders(),
       ...options.headers,
     },
   })
@@ -102,23 +131,31 @@ const openCreateDialog = () => {
   dialog.value = true
 }
 
+const getQuestionOptions = options => {
+  if (typeof options === 'string') {
+    try {
+      return JSON.parse(options)
+    }
+    catch {
+      return emptyQuestion().options
+    }
+  }
+
+  return options ?? emptyQuestion().options
+}
+
 const openEditDialog = item => {
 
   editingId.value = item.id
-  // console.log(item.id)
   question.value = {
     question: item.text,
     difficulty: item.difficulty,
     type: item.type,
-    options: {
-      option_a: item.option_a,
-      option_b: item.option_b,
-      option_c: item.option_c,
-      option_d: item.option_d,
-    },
+    options: getQuestionOptions(item.options),
     correct_answer: item.correct_answer,
-    category: item.category_id,
-    score: item.score_value,
+    category: Number(item.category_id),
+    score: Number(item.score_value),
+    score_if_wrong: Number(item.score_ifwrong),
   }
   errorMessage.value = ''
   dialog.value = true
@@ -131,14 +168,18 @@ const saveQuestion = async () => {
   try {
     const url = isEditing.value ? `/api/questions/${editingId.value}` : '/api/questions'
     const method = isEditing.value ? 'PUT' : 'POST'
+    const token = await getFreshCsrfToken()
+    const payload = isEditing.value
+      ? { ...question.value, category_id: question.value.category }
+      : question.value
 
     const savedQuestion = await request(url, {
       method,
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRF-TOKEN': csrfToken(),
+        'X-CSRF-TOKEN': token,
       },
-      body: JSON.stringify(question.value),
+      body: JSON.stringify(payload),
     })
 
     if (isEditing.value) {
@@ -169,9 +210,6 @@ const deleteQuestion = async item => {
   try {
     await request(`/api/questions/${item.id}`, {
       method: 'DELETE',
-      headers: {
-        'X-CSRF-TOKEN': csrfToken(),
-      },
     })
     questions.value = questions.value.filter(question => question.id !== item.id)
   }
@@ -184,6 +222,24 @@ const getCategoryName = categoryId => {
   const category = categories.value.find(item => Number(item.id) === Number(categoryId))
   return category?.name ?? `#${categoryId ?? 'unknown'}`
 }
+
+const tableQuestions = computed(() => questions.value.map(item => ({
+  ...item,
+  category_name: getCategoryName(item.category_id),
+})))
+
+const filteredQuestions = computed(() => {
+  const query = search.value.trim().toLowerCase()
+
+  return tableQuestions.value.filter(item => {
+    const matchesCategory = selectedCategory.value === null
+      || Number(item.category_id) === Number(selectedCategory.value)
+    const matchesSearch = !query || [item.text, item.category_name, item.correct_answer]
+      .some(value => String(value ?? '').toLowerCase().includes(query))
+
+    return matchesCategory && matchesSearch
+  })
+})
 
 onMounted(() => Promise.all([loadQuestions(), loadCategories()]))
 </script>
@@ -207,16 +263,48 @@ onMounted(() => Promise.all([loadQuestions(), loadCategories()]))
           </VAlert>
         </VCardText>
 
+        <VCardText>
+          <VRow>
+            <VCol
+              cols="12"
+              md="7"
+            >
+              <VTextField
+                v-model="search"
+                clearable
+                label="Cari soal atau kategori"
+                prepend-inner-icon="ri-search-line"
+              />
+            </VCol>
+            <VCol
+              cols="12"
+              md="5"
+            >
+              <VSelect
+                v-model="selectedCategory"
+                clearable
+                label="Pilih kategori"
+                :items="categories"
+                item-title="name"
+                item-value="id"
+              />
+            </VCol>
+          </VRow>
+        </VCardText>
+
         <VDataTable
           :headers="headers"
-          :items="questions"
+          :items="filteredQuestions"
           :loading="isLoading"
           item-value="id"
         >
-          
-        <template #item.category_id="{ item }">
-          {{ getCategoryName(item.category_id) }}
-        </template>
+          <template #item.no="{ index }">
+            {{ index + 1 }}
+          </template>
+
+          <template #item.category_id="{ item }">
+            {{ item.category_name }}
+          </template>
 
           <template #item.actions="{ item }">
             <VBtn
@@ -296,18 +384,36 @@ onMounted(() => Promise.all([loadQuestions(), loadCategories()]))
                 label="Option D"
                 :rules="[value => !!value || 'Option D is required.']"
               />
-              <VTextField
-                v-model="question.score"
-                class="mt-4"
-                label="Score"
-                min="1"
-                type="number"
-                :rules="[value => !!value || 'Score is required.']"
-              />
+              <VRow class="mt-1">
+                <VCol
+                  cols="12"
+                  md="6"
+                >
+                  <VTextField
+                    v-model="question.score"
+                    label="Score"
+                    min="1"
+                    type="number"
+                    :rules="[value => !!value || 'Score is required.']"
+                  />
+                </VCol>
+                <VCol
+                  cols="12"
+                  md="6"
+                >
+                  <VTextField
+                    v-model="question.score_if_wrong"
+                    label="Score if Wrong"
+                    min="1"
+                    type="number"
+                    :rules="[value => !!value || 'Score if wrong is required.']"
+                  />
+                </VCol>
+              </VRow>
               <VSelect
                 v-model="question.correct_answer"
                 class="mt-4"
-                :items="['A', 'B', 'C', 'D']"
+                :items="[question.options.option_a, question.options.option_b, question.options.option_c, question.options.option_d]"
                 label="Correct answer"
               />
               <div class="d-flex justify-end gap-3 mt-6">

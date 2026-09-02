@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 Route::post('/auth/register', [AuthController::class, 'register'])->middleware('throttle:6,1');
 Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:6,1');
 Route::post('/auth/logout', [AuthController::class, 'logout'])->middleware('auth');
+Route::get('/csrf-token', fn () => response()->json([
+    'token' => csrf_token(),
+]));
 Route::get('/auth/user', fn (Request $request) => response()->json([
     'user' => $request->user(),
 ]))->middleware('auth');

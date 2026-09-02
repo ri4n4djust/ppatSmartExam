@@ -31,7 +31,7 @@ const isUser = computed(() => !isAdmin.value && !isManager.value);
       :item="{
         title: 'User Dashboard',
         icon: 'ri-dashboard-line',
-        to: '/user-dashboard',
+        to: '/dashboard',
       }"
     />
     <VerticalNavLink
@@ -41,6 +41,20 @@ const isUser = computed(() => !isAdmin.value && !isManager.value);
         to: '/account-settings',
       }"
     />
+    <!-- 👉 Apps & Pages -->
+    <VerticalNavSectionTitle
+      :item="{
+        heading: 'Laporan',
+      }"
+    />
+    <VerticalNavLink
+      :item="{
+        title: 'Hasil Ujian',
+        icon: 'ri-bar-chart-box-line',
+        to: '/laporan-ujian',
+      }"
+    />
+    
   </div>
   <div v-else>
     <!-- 👉 Apps & Pages -->
@@ -96,6 +110,13 @@ const isUser = computed(() => !isAdmin.value && !isManager.value);
         to: '/bank-soal',
       }"
     />
+    <VerticalNavLink
+      :item="{
+        title: 'Jadwal Ujian',
+        icon: 'ri-user-line',
+        to: '/jadwal-ujian',
+      }"
+    />
 
     <VerticalNavLink
       v-if="isUser || isManager || isAdmin"
@@ -124,14 +145,7 @@ const isUser = computed(() => !isAdmin.value && !isManager.value);
       }"
     />
 
-    <VerticalNavLink
-      v-if="isAdmin || isManager"
-      :item="{
-        title: 'Reports',
-        icon: 'ri-bar-chart-2-line',
-        to: '/reports',
-      }"
-    />
+    
 
     <VerticalNavLink
       v-if="isAdmin"
@@ -145,22 +159,36 @@ const isUser = computed(() => !isAdmin.value && !isManager.value);
     <VerticalNavLink
       v-if="isManager || isAdmin"
       :item="{
-        title: 'Team',
+        title: 'Daftar Siswa',
         icon: 'ri-team-line',
-        to: '/team',
+        to: '/daftar-siswa',
       }"
     />
 
-    <VerticalNavLink
+    <!-- <VerticalNavLink
       :item="{
         title: 'Error',
         icon: 'ri-information-line',
         to: '/no-existence',
       }"
+    /> -->
+    <!-- 👉 Apps & Pages -->
+    <VerticalNavSectionTitle
+      :item="{
+        heading: 'Reports',
+      }"
+    />
+    <VerticalNavLink
+      v-if="isAdmin || isManager"
+      :item="{
+        title: 'Laporan Ujian',
+        icon: 'ri-bar-chart-2-line',
+        to: '/laporan-ujian-admin',
+      }"
     />
 
     <!-- 👉 User Interface -->
-    <VerticalNavSectionTitle
+    <!-- <VerticalNavSectionTitle
       :item="{
         heading: 'User Interface',
       }"
@@ -185,10 +213,10 @@ const isUser = computed(() => !isAdmin.value && !isManager.value);
         icon: 'ri-bar-chart-box-line',
         to: '/cards',
       }"
-    />
+    /> -->
 
     <!-- 👉 Forms & Tables -->
-    <VerticalNavSectionTitle
+    <!-- <VerticalNavSectionTitle
       :item="{
         heading: 'Forms & Tables',
       }"
@@ -207,6 +235,6 @@ const isUser = computed(() => !isAdmin.value && !isManager.value);
         icon: 'ri-table-alt-line',
         to: '/tables',
       }"
-    />
+    /> -->
   </div>
 </template>
