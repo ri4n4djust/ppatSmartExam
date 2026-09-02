@@ -65,8 +65,7 @@ export default defineConfig({
   },
   build: {
     chunkSizeWarningLimit: 5000,
-    outDir: '.', // hati-hati, ini akan menaruh hasil build di root project
-    emptyOutDir: false // jangan hapus root project
+    
   },
   optimizeDeps: {
     exclude: ['vuetify'],
