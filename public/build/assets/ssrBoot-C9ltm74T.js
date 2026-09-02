@@ -1,0 +1,1 @@
+import{v as t,B as e,E as s,p as n}from"./main-x5b-r3eg.js";function i(){const o=s(!1);return t(()=>{window.requestAnimationFrame(()=>{o.value=!0})}),{ssrBootStyles:n(()=>o.value?void 0:{transition:"none !important"}),isBooted:e(o)}}export{i as u};
