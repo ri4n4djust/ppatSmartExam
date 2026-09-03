@@ -206,10 +206,14 @@ const deleteQuestion = async item => {
     return
 
   errorMessage.value = ''
+  const token = await getFreshCsrfToken()
 
   try {
     await request(`/api/questions/${item.id}`, {
       method: 'DELETE',
+      headers: {
+        'X-CSRF-TOKEN': token,
+      },
     })
     questions.value = questions.value.filter(question => question.id !== item.id)
   }

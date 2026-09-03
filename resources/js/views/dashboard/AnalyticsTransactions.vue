@@ -1,28 +1,22 @@
 <script setup>
 const statistics = [
   {
-    title: 'Sales',
+    title: 'Materi',
     stats: '245k',
     icon: 'ri-pie-chart-2-line',
     color: 'primary',
   },
   {
-    title: 'Customers',
+    title: 'Ujian',
     stats: '12.5k',
     icon: 'ri-group-line',
     color: 'success',
   },
   {
-    title: 'Product',
+    title: 'Get Started',
     stats: '1.54k',
     icon: 'ri-macbook-line',
     color: 'warning',
-  },
-  {
-    title: 'Revenue',
-    stats: '$88k',
-    icon: 'ri-money-dollar-circle-line',
-    color: 'info',
   },
 ]
 
@@ -43,10 +37,10 @@ const moreList = [
 </script>
 
 <template>
-  <VCard title="Transactions">
+  <VCard title="Task">
     <template #subtitle>
       <p class="text-body-1 mb-0">
-        <span class="d-inline-block font-weight-medium text-high-emphasis">Total 48.5% Growth</span> <span class="text-high-emphasis">😎</span> this month
+        <span class="d-inline-block font-weight-medium text-high-emphasis">Tingkatkan Kompetensi</span> <span class="text-high-emphasis">😎</span> this month
       </p>
     </template>
 
