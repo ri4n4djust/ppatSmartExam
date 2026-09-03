@@ -106,14 +106,14 @@ const isUser = computed(() => !isAdmin.value && !isManager.value);
     <VerticalNavLink
       :item="{
         title: 'Bank Soal',
-        icon: 'ri-user-line',
+        icon: 'ri-remixicon-line',
         to: '/bank-soal',
       }"
     />
     <VerticalNavLink
       :item="{
         title: 'Jadwal Ujian',
-        icon: 'ri-user-line',
+        icon: 'ri-table-alt-line',
         to: '/jadwal-ujian',
       }"
     />

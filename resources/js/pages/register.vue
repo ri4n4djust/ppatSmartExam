@@ -93,7 +93,7 @@ const register = async () => {
           <img
             :src="logo"
             alt="PPAT SMART EXAM logo"
-            class="app-logo-image"
+            class="app-logo-image login-logo"
           >
           <!-- <h2 class="font-weight-medium text-2xl text-uppercase">
             PPAT SMART EXAM

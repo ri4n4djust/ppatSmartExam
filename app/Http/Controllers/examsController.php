@@ -107,10 +107,12 @@ class examsController extends Controller
 
         $detail = DB::table('questions')
                 ->join('exam_answers', 'questions.id', '=', 'exam_answers.question_id')
+                ->join('categories', 'questions.category_id', '=', 'categories.id')
                 ->select(
                     'questions.id as question_id',
                     'questions.text as question_text',
                     'questions.options',
+                    'categories.name as category_name',
                     'exam_answers.answer_text',
                     'exam_answers.is_correct',
                     'exam_answers.score'
@@ -124,6 +126,29 @@ class examsController extends Controller
             'exam_id' => $examId,
             'result' => $detail
         ]);
+    }
+    public function checkExamStatus(Request $request)
+    {
+        
+
+        $examId = $request->input('exam_id');
+        $siswaId = $request->input('siswa_id');
+
+        // Ambil data ujian berdasarkan ID
+        $exam = DB::table('exam_answers')->where('exam_id', $examId)->where('siswa_id', $siswaId)->first();
+
+        if (!$exam) {
+            return response()->json(['message' => 'Exam not found'], 404);
+        }
+
+        // Cek status ujian
+     
+            return response()->json([
+                'status' => 'Completed',
+                'message' => 'You have already completed this exam.',
+                'result' => $exam
+                ]);
+        
     }
 
     public function show(Exams $exam): JsonResponse

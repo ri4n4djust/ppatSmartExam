@@ -87,10 +87,11 @@ const login = async () => {
           class="d-flex align-center gap-3"
         >
           <!-- eslint-disable vue/no-v-html -->
-          <div
-            class="d-flex"
-            v-html="logo"
-          />
+          <img
+            :src="logo"
+            alt="PPAT SMART EXAM logo"
+            class="app-logo-image login-logo"
+          >
           <h2 class="font-weight-medium text-2xl text-uppercase">
             PPAT SMART EXAM
           </h2>
@@ -220,4 +221,9 @@ const login = async () => {
 
 <style lang="scss">
 @use "@core-scss/template/pages/page-auth";
+.login-logo {
+  block-size: 4rem;
+  inline-size: 4rem;
+  object-fit: contain;
+}
 </style>

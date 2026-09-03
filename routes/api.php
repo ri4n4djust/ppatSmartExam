@@ -18,6 +18,7 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::post('questions/assign', [QuestionsController::class, 'assignQuestions']);
     Route::post('exams/submit', [ExamsController::class, 'submitExam']);
     Route::post('hasil-ujian', [ExamsController::class, 'getExamResults']);
+    Route::post('cek-ujian', [ExamsController::class, 'checkExamStatus']);
 
     Route::post('laporan-user', [laporanController::class, 'indexUser']);
     Route::post('laporan-admin', [laporanController::class, 'indexAdmin']);

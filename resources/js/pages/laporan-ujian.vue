@@ -11,6 +11,34 @@ const detailDialog = ref(false)
 const selectedExam = ref(null)
 const questionsList = ref([])
 
+const categorySummary = computed(() => {
+  const summary = {}
+
+  for (const item of questionsList.value) {
+    const categoryName = item.category_name || 'Tanpa Kategori'
+
+    if (!summary[categoryName]) {
+      summary[categoryName] = {
+        name: categoryName,
+        totalQuestions: 0,
+        correctAnswers: 0,
+      }
+    }
+
+    summary[categoryName].totalQuestions += 1
+
+    if (item.is_correct === true || Number(item.is_correct) === 1)
+      summary[categoryName].correctAnswers += 1
+  }
+
+  return Object.values(summary)
+    .map(entry => ({
+      ...entry,
+      percentage: entry.totalQuestions ? (entry.correctAnswers / entry.totalQuestions) * 100 : 0,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name))
+})
+
 const getCsrfHeaders = () => {
   const metaToken = document.querySelector('meta[name="csrf-token"]')?.content ?? ''
   const xsrfCookie = document.cookie
@@ -129,6 +157,7 @@ const openDetailDialog = async (exam) => {
   }
 }
 
+
 const headers = [
   { title: 'No', key: 'no' },
   { title: 'Judul', key: 'title' },
@@ -136,7 +165,6 @@ const headers = [
   { title: 'Durasi', key: 'duration' },
   { title: 'Jumlah Soal', key: 'count_qa' },
   { title: 'Total Nilai', key: 'total_score' },
-  { title: 'Status', key: 'status' },
   { title: 'Aksi', key: 'actions', sortable: false, align: 'end' },
 ]
 
@@ -225,15 +253,6 @@ onMounted(loadExams)
             <template #item.no="{ index }">
               {{ index + 1 }}
             </template>
-            <template #item.status="{ item }">
-              <VChip
-                :color="statusColor(item.status)"
-                size="small"
-                variant="tonal"
-              >
-                {{ item.status }}
-              </VChip>
-            </template>
             <template #item.actions="{ item }">
               <VBtn
                 icon="ri-eye-line"
@@ -256,30 +275,57 @@ onMounted(loadExams)
     <VCard title="Detail Hasil Ujian">
       <VCardText v-if="selectedExam">
         <VRow>
-          <VCol cols="12" md="6">
+          <VCol cols="12" md="4">
             <VListItem title="Judul" :subtitle="selectedExam.title" />
           </VCol>
-          <VCol cols="12" md="6">
+          <VCol cols="12" md="4">
             <VListItem title="Tanggal Ujian" :subtitle="selectedExam.exam_date" />
           </VCol>
-          <VCol cols="12" md="6">
+          <VCol cols="12" md="4">
             <VListItem title="Durasi" :subtitle="`${selectedExam.duration} menit`" />
           </VCol>
-          <VCol cols="12" md="6">
+          <VCol cols="12" md="4">
             <VListItem title="Jumlah Soal" :subtitle="String(selectedExam.count_qa)" />
           </VCol>
-          <VCol cols="12" md="6">
+          <VCol cols="12" md="4">
             <VListItem title="Total Nilai" :subtitle="String(selectedExam.total_score)" />
-          </VCol>
-          <VCol cols="12" md="6">
-            <VListItem title="Status" :subtitle="selectedExam.status" />
           </VCol>
         </VRow>
       </VCardText>
+
+      <VCardText v-if="categorySummary.length">
+        <div class="d-flex flex-column gap-3">
+          <div
+            v-for="category in categorySummary"
+            :key="category.name"
+            class="rounded border pa-3"
+          >
+            <div class="d-flex justify-space-between align-center mb-2">
+              <strong>{{ category.name }}</strong>
+              <span class="text-body-2 font-weight-medium">
+                {{ category.percentage.toFixed(1) }}%
+              </span>
+            </div>
+
+            <VProgressLinear
+              :model-value="category.percentage"
+              color="primary"
+              height="8"
+              rounded
+            />
+
+            <div class="text-caption mt-2">
+              {{ category.correctAnswers }} / {{ category.totalQuestions }} jawaban benar
+            </div>
+          </div>
+        </div>
+      </VCardText>
+
       <VCardText v-if="questionsList.length">
         <VDataTable
           :headers="[
             { title: 'No', key: 'no' },
+            // { title: 'Kategori', key: 'category_name' },
             { title: 'Pertanyaan', key: 'question_text' },
             { title: 'Jawaban', key: 'answer_text' },
             { title: 'Nilai', key: 'score' },
