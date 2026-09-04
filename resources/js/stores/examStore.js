@@ -27,7 +27,7 @@ export const useExamStore = defineStore('exam', {
         this.questions = data.question_ids.map(q => {
             // const opts = q.options
             const opts = typeof q.options === 'string' ? JSON.parse(q.options) : q.options
-            console.log(opts)
+            // console.log(opts)
             return {
                 ...q,
                 options: [
@@ -61,7 +61,7 @@ export const useExamStore = defineStore('exam', {
     },
     setAnswer(option) {
       this.questions[this.currentQuestionIndex].answer = option
-      console.log(`Jawaban untuk soal ${this.currentQuestionIndex + 1}: ${option}`)
+      // console.log(`Jawaban untuk soal ${this.currentQuestionIndex + 1}: ${option}`)
       this.nextQuestion()
     },
     tick() {
